@@ -14,6 +14,7 @@ create table empresas (
 
 ) engine=myisam default CHARSET=utf8mb4; 
 
+insert into empresas values (null, 'Suzano S/A', 13986);
 
 create table documentos_info (
 

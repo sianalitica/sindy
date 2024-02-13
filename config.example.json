@@ -1,0 +1,10 @@
+{
+    "url_cvm_base":"",
+    "data_base":{
+        "host":"",
+        "user":"",
+        "pass":"",
+        "port":"",
+        "dbas":""
+    }
+}
