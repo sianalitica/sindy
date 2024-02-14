@@ -37,7 +37,6 @@ create table documentos_info (
 
 ) engine=myisam default CHARSET=utf8mb4; 
 
-
 create table documentos_brutos (
 
     id bigint(255) primary key auto_increment,

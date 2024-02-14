@@ -18,7 +18,7 @@ class Config:
     def __init__(self):
         try:
             data = json.load(open('config.json'))
-            self.url_cvm_base = data['url_cvm_base']
+            self._url_cvm_base = data['url_cvm_base']
             self._data_base['host'] = data['data_base']['host']
             self._data_base['user'] = data['data_base']['user']
             self._data_base['pass'] = data['data_base']['pass']
