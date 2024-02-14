@@ -32,7 +32,15 @@ class Element :
         except:
             print("Erro no Element não foi possível pegar o InnerText da publicação")
             return ""
-    
+        
+    def getHTML(self) -> str:
+        try:
+            text = self.element.get_attribute('innerHTML')
+            return text
+        except:
+            print("Erro no Element não foi possível pegar o innerHTML da publicação")
+            return ""
+        
     def value(self, text=""):
         self.element.send_keys(text)
     

@@ -1,6 +1,8 @@
 from libs import navigator,config
 from libs.mysqli import mysqli
-
+import re
+from sindy.DocumentoInfo import DocumentoInfo
+from typing import List
 
 conf = config.Config.instance()
 
@@ -20,16 +22,81 @@ def getDataInfo():
     """)
     return cursor.fetchall()
 
-
-def getDocs(nav:navigator.Navigator, total_docs_database):
-    # pega o elemento com o texto de registro na base da tabela usando o <div id = grdDocumentos_info>
-    # o texto terá "Mostrando de 1 até 100 de 2,664 registros"
-    # criar o regex para puxar a quantidade total
-    # comparar a quantidade_total_do_site < total_docs_database para saber quantos registros precisamos pegar 
-    # pega os registros
-    # clica em seguinte se for necessário
-    # salva os registros no banco de dados
+def saveDocs(list_docs:List[DocumentoInfo]):
+    print("TOTAL: "+str(len(list_docs))+" de documentos")
     pass
+
+
+def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]:
+
+    quantidadeRegistrosEl = nav.findElement("id", "grdDocumentos_info")
+    matchQuant = re.search("([\d,]+)\sregistro", quantidadeRegistrosEl.getText())
+    textQuant = matchQuant.group(1).replace(",", "")
+    quantidade_total_do_site = int(textQuant)
+    quantidade_registros_salvar = quantidade_total_do_site - int(total_docs_database)
+    
+    list_documents:List[DocumentoInfo] = []
+
+    if(quantidade_registros_salvar > 0):
+
+        total_raspados = 0
+
+        index = ['codigo', 'empresa', 'categoria', 'tipo', 'especie', 'data_referencia', 'data_entrega', 'status', 'v', 'modalidade']
+        
+        finish = False
+
+        while not finish:
+            
+            els = nav.findElements("css", "#grdDocumentos > tbody > tr")
+            if(els == False): return list_documents
+
+            for el in els:
+
+                map_data = {
+                    'codigo':'',
+                    'empresa':'',
+                    'categoria':'',
+                    'tipo':'',
+                    'especie':'',
+                    'data_referencia':'',
+                    'data_entrega':'',
+                    'status':'',
+                    'v':'',
+                    'modalidade':'',
+                    'link':''
+                }
+
+                html = el.getHTML()
+                res  = re.search("onclick=\"OpenPopUpVer\(\'([^\s]+)\'\)\"\stitle", html)
+                map_data['link'] = res.group(1)
+                tds  = nav.findElements("tag", "td", 15, el)
+                if tds == False: continue 
+
+                i = 0
+                max = len(tds) -1
+                for td in tds:
+                    map_data[index[i]] = td.getText()
+                    i+=1
+                    if i == max: break
+
+                docObject = DocumentoInfo(map_data)
+                docObject.to_string()
+                list_documents.append(docObject)
+                total_raspados += 1
+
+                finish = quantidade_registros_salvar == total_raspados
+                if finish: break
+            # descomentar em produção
+            """
+            try:
+                if not finish: 
+                    nav.findElement('id', 'grdDocumentos_next').click()
+                    nav.sleep(1)
+            except:
+                print('botão "seguinte" não está disponível para ser clicado')
+            """
+
+    return list_documents
 
 
 def filter(nav:navigator.Navigator):
@@ -55,12 +122,12 @@ def filter(nav:navigator.Navigator):
     linkSemAssunto = nav.findElement("id", "lnkSemAssunto")
     if linkSemAssunto: linkSemAssunto.click()
 
-    nav.sleep()
-
 
 def start():
     data_list = getDataInfo()
     for item in data_list:
         nav = navigator.Navigator(conf.getUrlCvmBase()+'frmConsultaExternaCVM.aspx?codigoCVM='+item[1])
         filter(nav)
-        getDocs(nav, item[2])
+        list_docs = getDocs(nav, item[2])
+        saveDocs(list_docs)
+        nav.sleep()
