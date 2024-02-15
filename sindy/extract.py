@@ -4,6 +4,8 @@ import re
 from sindy.DocumentoInfo import DocumentoInfo
 from typing import List
 
+from datetime import datetime
+
 conf = config.Config.instance()
 
 
@@ -22,9 +24,25 @@ def getDataInfo():
     """)
     return cursor.fetchall()
 
-def saveDocs(list_docs:List[DocumentoInfo]):
-    print("TOTAL: "+str(len(list_docs))+" de documentos")
-    pass
+
+def saveDocs(list_docs:List[DocumentoInfo], empresa_id):
+    
+    conn    = mysqli.instance()
+    cursor  = conn.cursor()
+    sqlstr  = "INSERT INTO documentos_info (empresa_id, categoria, tipo, especie, data_referencia, data_entrega, status, v, modalidade, link_documento) "
+    sqlstr += "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    datain  = []
+    for doc in list_docs:
+        doc.empresa_id = empresa_id
+        doc.to_string()
+        print('------------')
+        print(doc.get_row())
+        print('------------')
+        datain.append(doc.get_row())
+
+    cursor.executemany(sqlstr,datain)
+    conn.commit()
+    print("TOTAL: "+str(len(list_docs))+" documentos raspados")
 
 
 def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]:
@@ -52,6 +70,8 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
 
             for el in els:
 
+               # print(el.getText())
+
                 map_data = {
                     'codigo':'',
                     'empresa':'',
@@ -67,8 +87,9 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
                 }
 
                 html = el.getHTML()
+                #print(html)
                 res  = re.search("onclick=\"OpenPopUpVer\(\'([^\s]+)\'\)\"\stitle", html)
-                map_data['link'] = res.group(1)
+                map_data['link'] = res.group(1) if res else ''
                 tds  = nav.findElements("tag", "td", 15, el)
                 if tds == False: continue 
 
@@ -80,21 +101,20 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
                     if i == max: break
 
                 docObject = DocumentoInfo(map_data)
-                docObject.to_string()
+                #docObject.to_string()
+                #print("---")
                 list_documents.append(docObject)
                 total_raspados += 1
 
                 finish = quantidade_registros_salvar == total_raspados
                 if finish: break
-            # descomentar em produção
-            """
+           
             try:
                 if not finish: 
                     nav.findElement('id', 'grdDocumentos_next').click()
                     nav.sleep(1)
             except:
                 print('botão "seguinte" não está disponível para ser clicado')
-            """
 
     return list_documents
 
@@ -124,10 +144,14 @@ def filter(nav:navigator.Navigator):
 
 
 def start():
+
+    print("Extração iniciada em: "+ str(datetime.now()))
+    
     data_list = getDataInfo()
+
     for item in data_list:
         nav = navigator.Navigator(conf.getUrlCvmBase()+'frmConsultaExternaCVM.aspx?codigoCVM='+item[1])
         filter(nav)
         list_docs = getDocs(nav, item[2])
-        saveDocs(list_docs)
+        saveDocs(list_docs, item[0])
         nav.sleep()

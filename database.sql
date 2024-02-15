@@ -28,7 +28,7 @@ create table documentos_info (
     status tinyint(1) not null,
     v int(10) not null,
     modalidade varchar(255) not null,
-    link_documento varchar(100) not null,
+    link_documento varchar(100),
     
     foreign key (empresa_id) 
     references empresas(id),

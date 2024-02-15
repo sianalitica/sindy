@@ -2,6 +2,13 @@ import asyncio
 from sindy import extract,docs,transform
 
 async def start():
+
+    print("""
+    ┍╸┑╻┍┑ ┍╸╮╻ ╻
+    ┕╸┑╽╽╽╽╽ ╽┕╻┙
+     ╸┙╹ ┕┙┕╸╯ ╹
+    """)
+
     while True:
         extract.start()
         docs.read()
