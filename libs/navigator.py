@@ -1,6 +1,7 @@
 import time
 import re
 import json
+import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -59,10 +60,10 @@ class Navigator :
     site     = ""
     scrollm  = 1
 
-    def __init__(self, site) -> None:
-        
+    def __init__(self, site, file_state=None) -> None:
         options = Options()
         options.add_experimental_option('prefs', {'intl.accept_languages': 'pt,pt_BR', "profile.default_content_setting_values.notifications" : 2})
+        self.file = file_state
         # options.add_argument('--headless=new')
         self.driver = webdriver.Chrome(executable_path='chromedriver', chrome_options=options)
         self.driver.set_window_size(2560, 1440)
@@ -71,7 +72,7 @@ class Navigator :
         self.driver.get(self.site)
         if self.getState():
             self.driver.get(self.site)
-    
+
     def exec(self, script:str) -> str | bool:
         try:
             return self.driver.execute_script(script)
@@ -90,7 +91,6 @@ class Navigator :
             self.driver.execute_script(f"window.scrollTo(0, document.body.scrollHeight);")
 
     def goto(self, url, full=False):
-        self.saveState()
         self.driver.get(url if full else self.site+url)
 
     def currentUrl(self):
@@ -119,6 +119,9 @@ class Navigator :
         file    = open('./cookies/'+self.file+'.json','w')
         file.write(json.dumps(cookies))
         file.close()
+
+    def clearState(self) :
+        os.remove('./cookies/'+self.file+'.json')
 
     def findElements(self, type, value, limit=15, element:Element=None) -> list[Element] | bool:
         naoEncontrou=True

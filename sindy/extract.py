@@ -4,8 +4,6 @@ import re
 from sindy.DocumentoInfo import DocumentoInfo
 from typing import List
 
-from datetime import datetime
-
 conf = config.Config.instance()
 
 
@@ -35,9 +33,6 @@ def saveDocs(list_docs:List[DocumentoInfo], empresa_id):
     for doc in list_docs:
         doc.empresa_id = empresa_id
         doc.to_string()
-        print('------------')
-        print(doc.get_row())
-        print('------------')
         datain.append(doc.get_row())
 
     cursor.executemany(sqlstr,datain)
@@ -70,8 +65,6 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
 
             for el in els:
 
-               # print(el.getText())
-
                 map_data = {
                     'codigo':'',
                     'empresa':'',
@@ -87,7 +80,6 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
                 }
 
                 html = el.getHTML()
-                #print(html)
                 res  = re.search("onclick=\"OpenPopUpVer\(\'([^\s]+)\'\)\"\stitle", html)
                 map_data['link'] = res.group(1) if res else ''
                 tds  = nav.findElements("tag", "td", 15, el)
@@ -101,8 +93,6 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
                     if i == max: break
 
                 docObject = DocumentoInfo(map_data)
-                #docObject.to_string()
-                #print("---")
                 list_documents.append(docObject)
                 total_raspados += 1
 
@@ -144,8 +134,6 @@ def filter(nav:navigator.Navigator):
 
 
 def start():
-
-    print("Extração iniciada em: "+ str(datetime.now()))
     
     data_list = getDataInfo()
 
