@@ -13,7 +13,12 @@ def transform_data_dia_mes(data) -> str:
 
 def transform_data_mes(data) -> str:
     dataMesParts = data.split('/')
-    return dataMesParts[1]+'-'+dataMesParts[0]+'-01 00:00:00'
+    mes    = int(dataMesParts[0])+1
+    messtr = "0"+str(mes) if mes < 10 else str(mes)
+    return dataMesParts[1]+'-'+messtr+'-01 00:00:00'
+
+def transform_data_ano(data) -> str:
+    return data+'-12-31 00:00:00'
 
 def get_status(status) -> int:
     if(status.lower() == 'ativo'):
@@ -22,7 +27,7 @@ def get_status(status) -> int:
         return 2
     else: return 3
 
-def data_to_en(data) -> str:
+def data_to_en(data) -> str | None:
 
     if re.match("\d{1,2}\/\d{2}\/\d{4}\s\d{2}:\d{2}", data):
         return transform_data_full(data)
@@ -32,8 +37,12 @@ def data_to_en(data) -> str:
     
     if re.match("\d{2}\/\d{4}", data):
         return transform_data_mes(data)
-    else:
-        return "0000-00-00 00:00:00"
+    
+    if re.match("\d{4}", data):
+        return transform_data_ano(data)
+    
+    return None
+        
     
 
 class DocumentoInfo:
@@ -50,6 +59,7 @@ class DocumentoInfo:
     v=0
     modalidade=''
     link=None
+    link_type=1
 
     def __init__(self, map_doc:map):
         
@@ -58,6 +68,8 @@ class DocumentoInfo:
         self.categoria  = map_doc['categoria'].strip()
         self.link       = None if map_doc['link'].strip() == '' else map_doc['link'].strip()
         
+        self.link_type = map_doc['link_type']
+
         self.tipo       = '-' if map_doc['tipo'].strip()       == '' else map_doc['tipo'].strip()
         self.especie    = '-' if map_doc['especie'].strip()    == '' else map_doc['especie'].strip()
         self.modalidade = '-' if map_doc['modalidade'].strip() == '' else map_doc['modalidade'].strip()
@@ -85,6 +97,7 @@ class DocumentoInfo:
             'v':self.v,
             'modalidade':self.modalidade,
             'link':self.link,
+            'link_type':str(self.link_type)
         })
 
     def get_row(self) -> tuple:
@@ -98,5 +111,6 @@ class DocumentoInfo:
             self.status,
             self.v,
             self.modalidade,
-            self.link
+            self.link,
+            self.link_type
         )

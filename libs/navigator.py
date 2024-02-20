@@ -64,7 +64,7 @@ class Navigator :
         options = Options()
         options.add_experimental_option('prefs', {'intl.accept_languages': 'pt,pt_BR', "profile.default_content_setting_values.notifications" : 2})
         self.file = file_state
-        # options.add_argument('--headless=new')
+        options.add_argument('--headless=new')
         self.driver = webdriver.Chrome(executable_path='chromedriver', chrome_options=options)
         self.driver.set_window_size(2560, 1440)
         self.site = site
@@ -105,7 +105,7 @@ class Navigator :
 
     def getState(self) :
         try :
-            file    = open('./cookies/'+self.file+'.json','r')
+            file    = open('./cookies/session.json','r')
             cookies = json.loads(file.read())
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
@@ -116,12 +116,12 @@ class Navigator :
 
     def saveState(self) :
         cookies = self.driver.get_cookies()
-        file    = open('./cookies/'+self.file+'.json','w')
+        file    = open('./cookies/session.json','w')
         file.write(json.dumps(cookies))
         file.close()
 
     def clearState(self) :
-        os.remove('./cookies/'+self.file+'.json')
+        os.remove('./cookies/session.json')
 
     def findElements(self, type, value, limit=15, element:Element=None) -> list[Element] | bool:
         naoEncontrou=True

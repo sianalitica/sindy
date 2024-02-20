@@ -14,11 +14,15 @@ class Config:
     }
 
     _url_cvm_base = ''
+    _link_base_2 = ''
 
     def __init__(self):
         try:
             data = json.load(open('config.json'))
+            
             self._url_cvm_base = data['url_cvm_base']
+            self._link_base_2  = data['link_base_2']
+
             self._data_base['host'] = data['data_base']['host']
             self._data_base['user'] = data['data_base']['user']
             self._data_base['pass'] = data['data_base']['pass']
