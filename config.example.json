@@ -1,6 +1,7 @@
 {
-    "url_cvm_base":"",
-    "link_base_2":"",
+    "url_cvm_base":"https://www.rad.cvm.gov.br/ENET/",
+    "link_base_2":"http://siteempresas.bovespa.com.br/dxw/",
+    "temp_dir":"/my/temp/files/dir/",
     "data_base":{
         "host":"",
         "user":"",

@@ -1,4 +1,5 @@
 import re
+import calendar
 
 def data_dia_mes(data) -> str:
     dataMesParts = data.split('/')
@@ -13,9 +14,11 @@ def transform_data_dia_mes(data) -> str:
 
 def transform_data_mes(data) -> str:
     dataMesParts = data.split('/')
-    mes    = int(dataMesParts[0])+1
-    messtr = "0"+str(mes) if mes < 10 else str(mes)
-    return dataMesParts[1]+'-'+messtr+'-01 00:00:00'
+    mes    = int(dataMesParts[0])
+    dia    = calendar.monthrange(int(dataMesParts[1]), mes)[1]
+    mes    = ("0"+str(mes) if mes < 10 else str(mes))
+    dia    = ("0"+str(dia) if dia < 10 else str(dia))
+    return dataMesParts[1]+'-'+mes+'-'+dia+'00:00:00'
 
 def transform_data_ano(data) -> str:
     return data+'-12-31 00:00:00'
@@ -25,7 +28,9 @@ def get_status(status) -> int:
         return 1
     elif(status.lower() == 'inativo'):
         return 2
-    else: return 3
+    elif(status.lower() == 'cancelado'):
+        return 3
+    else: return 4
 
 def data_to_en(data) -> str | None:
 
@@ -35,7 +40,7 @@ def data_to_en(data) -> str | None:
     if re.match("\d{1,2}\/\d{2}\/\d{4}", data):
         return transform_data_dia_mes(data)
     
-    if re.match("\d{2}\/\d{4}", data):
+    if re.match("\d{1,2}\/\d{4}", data):
         return transform_data_mes(data)
     
     if re.match("\d{4}", data):

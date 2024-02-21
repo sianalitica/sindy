@@ -4,8 +4,9 @@ import re
 from sindy.DocumentoInfo import DocumentoInfo
 from typing import List
 from libs.navigator import Element
+import json
 
-from libs.logs import info,warning,danger,success
+from libs.logs import warning,danger,success
 
 conf = config.Config.instance()
 
@@ -44,6 +45,8 @@ def getDataInfo():
 
 def saveDocs(list_docs:List[DocumentoInfo], empresa_id):
     
+    if len(list_docs) == 0: return
+
     conn    = mysqli.instance()
     cursor  = conn.cursor()
     sqlstr  = "INSERT INTO documentos_info (empresa_id, categoria, tipo, especie, data_referencia, data_entrega, status, v, modalidade, link_documento, link_type) "
@@ -56,9 +59,9 @@ def saveDocs(list_docs:List[DocumentoInfo], empresa_id):
     try:
         cursor.executemany(sqlstr,datain)
         conn.commit()
-        success("TOTAL: "+str(len(list_docs))+" arquivos extraídos")
+        success("Total de "+str(len(list_docs))+" arquivos extraídos")
     except:
-        danger('Erro ao tentar salvar dados')
+        danger('ERRO AO TENTAR SALVAR OS DADOS', "query -> "+sqlstr+"\n\ndata -> "+json.dumps(dict(datain)))
     
 
 
@@ -77,6 +80,10 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
         warning("Não há novos documentos à serem extraídos.")
         return list_documents
 
+    if quantidade_registros_salvar < 0:
+        danger(f"!!!! Há registros duplicados !!!! Total {abs(quantidade_registros_salvar)} registros !!!!")
+        return list_documents
+    
     total_raspados = 0
 
     index = ['codigo', 'empresa', 'categoria', 'tipo', 'especie', 'data_referencia', 'data_entrega', 'status', 'v', 'modalidade']
@@ -86,7 +93,9 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
     while not finish:
         
         els = nav.findElements("css", "#grdDocumentos > tbody > tr")
-        if(els == False): return list_documents
+        if(els == False): 
+            danger("Não foi possível carregar a lista de documentos com '#grdDocumentos > tbody > tr' - extract: linha 97")
+            return list_documents
 
         for el in els:
 
@@ -132,7 +141,7 @@ def getDocs(nav:navigator.Navigator, total_docs_database) -> List[DocumentoInfo]
                 page+=1
                 nav.sleep(1)
         except:
-            danger('botão "seguinte" não está disponível para ser clicado')
+            danger('O botão "seguinte" não está disponível para ser clicado - extract: linha 142')
 
     return list_documents
 

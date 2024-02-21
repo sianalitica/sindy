@@ -1,5 +1,9 @@
 config.json
 cookies/*.json
+logs/*.txt
+error_files/*.txt
+/docs_temp/*
+!/docs_temp/readme.md
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

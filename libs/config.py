@@ -15,6 +15,7 @@ class Config:
 
     _url_cvm_base = ''
     _link_base_2 = ''
+    _temp_dir = ''
 
     def __init__(self):
         try:
@@ -22,6 +23,7 @@ class Config:
             
             self._url_cvm_base = data['url_cvm_base']
             self._link_base_2  = data['link_base_2']
+            self._temp_dir     = data['temp_dir']
 
             self._data_base['host'] = data['data_base']['host']
             self._data_base['user'] = data['data_base']['user']
@@ -37,8 +39,14 @@ class Config:
             cls._instance = cls()
         return cls._instance
     
+    def getLinkBase2(self):
+        return self._link_base_2
+
     def getDataBase(self):
         return self._data_base
     
     def getUrlCvmBase(self):
         return self._url_cvm_base
+    
+    def getTempDir(self):
+        return self._temp_dir
