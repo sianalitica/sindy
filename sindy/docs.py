@@ -5,6 +5,7 @@ from libs.logs import info,warning,danger,success
 from pypdf import PdfReader
 import mysql.connector
 import textract
+import pandas as pd
 
 import time
 import json
@@ -46,6 +47,15 @@ def salvar_dados(documento_info_id, text, ext) -> bool:
         return False
 
 
+def ler_arquivo_xlsx(file) -> str:
+    try:
+        df = pd.read_excel(file)
+        return df.to_csv(sep='\t', index=False)
+    except:
+        danger(f"Não foi possível ler o arquivo '{file}'")
+        return ""
+
+
 def ler_aquivo_qualquer(file) -> str:
     try:
         text = textract.process(file)
@@ -85,10 +95,18 @@ def ler_arquivos_e_salvar(documento_info_id, files, dir) -> bool:
         extension = file.split(".")[-1]
         
         if os.path.isfile(dir+file):
-            text = ler_arquivo_pdf(dir+file) if extension == 'pdf' else ler_aquivo_qualquer(dir+file)
+
+            if extension == 'pdf':
+                text = ler_arquivo_pdf(dir+file)
+            elif extension == 'xlsx':
+                text = ler_arquivo_xlsx(dir+file)
+            else: 
+                text = ler_aquivo_qualquer(dir+file) 
+
             if salvar_dados(documento_info_id, text, extension):
                 total_success += 1
             else: total_error += 1
+
         else:
             otherdir = dir+file+'/'
             othersfl = os.listdir(otherdir)
