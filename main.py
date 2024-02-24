@@ -14,10 +14,10 @@ async def start():
     while True:
         warning("====================================================")
         info("Extração iniciada")
-        #extract.start()
+        extract.start()
         info("Leitura e gravação de documento iniciado")
         docs.read()
-        info("Fazendo transformação de dados")
+        # info("Fazendo transformação de dados")
         #transform.now()
         warning('Fazendo uma pausa de 3h a partir de agora...')
         await asyncio.sleep(60 * 60 * 3)

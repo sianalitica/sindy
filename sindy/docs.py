@@ -1,9 +1,13 @@
 from libs import config,mysqli
 from libs.navigator import Navigator
 from libs.driver_download import download
-from libs.logs import info,warning
+from libs.logs import info,warning,danger,success
 from pypdf import PdfReader
+import mysql.connector
+import textract
 
+import time
+import json
 import zipfile
 import tarfile
 import os
@@ -28,36 +32,69 @@ def converter_arquivos_pdf():
             # os.remove(direct+file)
          """   
 
-def salvar_dados():
-    pass
+def salvar_dados(documento_info_id, text, ext) -> bool:
+    cursor  = conn.cursor()
+    sqlstr  = "INSERT INTO documentos_brutos (documento_info_id, texto, ext) "
+    sqlstr += "VALUES (%s, %s, %s)"
+    datain  = (documento_info_id, text, ext)
+    try:
+        cursor.execute(sqlstr,datain)
+        conn.commit()
+        return True
+    except mysql.connector.Error as err:
+        danger('ERRO AO TENTAR SALVAR OS DADOS EM documentos_brutos', "query -> "+sqlstr+"\n\ndata -> "+json.dumps(datain)+"\n\nmysql msg: "+err.msg+"\n mysql code: "+str(err.errno))
+        return False
 
-def ler_arquivo_pdf(pdffile) -> str:
-    reader = PdfReader(pdffile)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() + "\n"
-    return text
 
-def ler_arquivos_e_salvar():
+def ler_aquivo_qualquer(file) -> str:
+    try:
+        return textract.process(file)
+    except:
+        return ""
 
-    files = os.listdir(conf.getTempDir())
 
+def ler_arquivo_pdf(pdffile) -> str | None:
+    try:
+        reader = PdfReader(pdffile)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text() + "\n"
+        return text
+    except Exception as e:
+        danger("Não foi possível ler o arquivo pdf", f"msg: {e.msg}")
+        return None
+
+
+def ler_arquivos_e_salvar(documento_info_id, files, dir) -> bool | int:
+
+    total_success = 0
+    total_error   = 0
     for file in files:
+
         if file.lower() == "readme.md": continue
         extension = file.split(".")[-1]
-        if extension == 'pdf':
-            text = ler_arquivo_pdf(conf.getTempDir()+file)
-        else:
-            text = ""
         
-        salvar_dados()
+        if os.path.isfile(dir+file):
+            text = ler_arquivo_pdf(dir+file) if extension == 'pdf' else ler_aquivo_qualquer(dir+file)
+            if salvar_dados(documento_info_id, text, extension):
+                total_success += 1
+            else: total_error += 1
+        else:
+            otherdir = dir+file+'/'
+            othersfl = os.listdir(otherdir)
+            ler_arquivos_e_salvar(documento_info_id, othersfl, otherdir)
+
+        return total_success >= total_error
+
+    return salvar_dados(documento_info_id, "", "broken")
+
 
 def extrair_arquivos(arquivo_compactado):
 
     destino  = conf.getTempDir()
     extensao = os.path.splitext(arquivo_compactado)[1].lower()
 
-    if extensao in ('.zip', '.WTL'):
+    if extensao in ('.zip', '.wtl'):
         with zipfile.ZipFile(destino+arquivo_compactado, 'r') as zip_ref:
             zip_ref.extractall(destino)
     elif extensao in ('.tar', '.gz', '.bz2', '.xz', '.tgz', '.tbz'):
@@ -65,6 +102,7 @@ def extrair_arquivos(arquivo_compactado):
             tar_ref.extractall(destino)
     else:
         warning(f"Formato de arquivo '{extensao}' não suportado.")
+    time.sleep(1)
 
 
 def analise_arquivos():
@@ -73,9 +111,10 @@ def analise_arquivos():
 
     for file in files:
         if file.lower() == "readme.md": continue
-        if file.split('.')[-1] in ('WTL','zip','tar','gz','bz2', 'xz', 'tgz', 'tbz'):
+        if file.split('.')[-1].lower() in ('wtl','zip','tar','gz','bz2', 'xz', 'tgz', 'tbz'):
             extrair_arquivos(file)
             os.remove(conf.getTempDir()+file)
+            
 
 
 def getLinksDocsToAnalise():
@@ -98,16 +137,34 @@ def getLinksDocsToAnalise():
 
 def read():
 
-    links = getLinksDocsToAnalise()
-    
+    links        = getLinksDocsToAnalise()
+    successFiles = 0
+    errorFiles   = 0
+
     if len(links) == 0:
         warning("Não há novos documentos a serem lidos e gravados")
         return
+    
     info(f"Total de {str(len(links))} documentos a serem lidos e gravados")
     info(f"realizando downloads e armazenando os documentos brutos")
-    # download(link=links[0][1], typeLink=links[0][2])
-    # analise_arquivos()
+    
+    errorLinks = ""
+    for link in links:
+        download(link=link[1], typeLink=link[2])
+        analise_arquivos()
+        maindir = conf.getTempDir()
+        files   = os.listdir(maindir)
+        if ler_arquivos_e_salvar(link[0], files, maindir):
+            successFiles += 1
+        else:
+            errorLinks += f"| documento_info_id: {link[0]} , link: {link[1]} , type: {link[2]} |\n" 
+            errorFiles += 1
+
+    if successFiles > 0:
+        success(f"{successFiles} arquivos foram lidos e salvos com sucesso")
+    if errorFiles > 0:
+        danger(f"Não foi possível ler ou salvar {errorFiles} arquivos")
     # converter_arquivos_pdf()
-    ler_arquivos_e_salvar()
+    
 
     

@@ -40,7 +40,7 @@ create table documentos_brutos (
 
     id bigint(255) primary key auto_increment,
     documento_info_id bigint(255) not null,
-    texto text not null,
+    texto longtext not null,
     ext varchar(10) not null,
 
     foreign key (documento_info_id) 

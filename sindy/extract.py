@@ -61,7 +61,7 @@ def saveDocs(list_docs:List[DocumentoInfo], empresa_id):
         conn.commit()
         success("Total de "+str(len(list_docs))+" arquivos extraídos")
     except:
-        danger('ERRO AO TENTAR SALVAR OS DADOS', "query -> "+sqlstr+"\n\ndata -> "+json.dumps(dict(datain)))
+        danger('ERRO AO TENTAR SALVAR OS DADOS EM documentos_info', "query -> "+sqlstr+"\n\ndata -> "+json.dumps(dict(datain)))
     
 
 
