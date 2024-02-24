@@ -48,9 +48,16 @@ def salvar_dados(documento_info_id, text, ext) -> bool:
 
 def ler_aquivo_qualquer(file) -> str:
     try:
-        return textract.process(file)
+        text = textract.process(file)
+        return text
     except:
-        return ""
+        try:
+            with open(file, 'r', encoding = 'utf-8') as f:
+                text = f.read()
+                return text 
+        except Exception as e:
+            danger(f"Não foi possível ler o arquivo '{file}' | problema com encoding")
+            return ""
 
 
 def ler_arquivo_pdf(pdffile) -> str | None:
@@ -62,13 +69,16 @@ def ler_arquivo_pdf(pdffile) -> str | None:
         return text
     except Exception as e:
         danger("Não foi possível ler o arquivo pdf", f"msg: {e.msg}")
-        return None
+        return ler_aquivo_qualquer(pdffile)
 
 
-def ler_arquivos_e_salvar(documento_info_id, files, dir) -> bool | int:
+def ler_arquivos_e_salvar(documento_info_id, files, dir) -> bool:
 
     total_success = 0
     total_error   = 0
+
+    if len(files) <= 1: return salvar_dados(documento_info_id, "", "broken")
+
     for file in files:
 
         if file.lower() == "readme.md": continue
@@ -84,9 +94,8 @@ def ler_arquivos_e_salvar(documento_info_id, files, dir) -> bool | int:
             othersfl = os.listdir(otherdir)
             ler_arquivos_e_salvar(documento_info_id, othersfl, otherdir)
 
-        return total_success >= total_error
+    return total_success >= total_error
 
-    return salvar_dados(documento_info_id, "", "broken")
 
 
 def extrair_arquivos(arquivo_compactado):
