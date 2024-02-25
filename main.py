@@ -24,7 +24,3 @@ async def start():
         success('De volta ao trabalho!')
 
 asyncio.run(start())
-
-
-# usar essa lib para converter em html
-# https://www.adobe.com/acrobat/hub/how-to-convert-pdf-to-html.html
