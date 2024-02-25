@@ -78,7 +78,7 @@ def ler_arquivo_pdf(pdffile) -> str | None:
             text += page.extract_text() + "\n"
         return text
     except Exception as e:
-        danger("Não foi possível ler o arquivo pdf", f"msg: {e.msg}")
+        danger(f"Não foi possível ler o arquivo pdf | '{pdffile}'")
         return ler_aquivo_qualquer(pdffile)
 
 

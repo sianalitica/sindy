@@ -3,7 +3,7 @@ from libs.mysqli import mysqli
 import re
 from sindy.DocumentoInfo import DocumentoInfo
 from typing import List
-from libs.navigator import Element
+from libs.navigator import Element,safe_navigator
 import json
 
 from libs.logs import warning,danger,success
@@ -176,7 +176,7 @@ def start():
 
     for item in data_list:
 
-        nav = navigator.Navigator(conf.getUrlCvmBase()+'frmConsultaExternaCVM.aspx?codigoCVM='+item[1])
+        nav = safe_navigator(conf.getUrlCvmBase()+'frmConsultaExternaCVM.aspx?codigoCVM='+item[1])
         filter(nav)
         list_docs = getDocs(nav, item[2])
         saveDocs(list_docs, item[0])

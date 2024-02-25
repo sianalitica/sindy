@@ -39,11 +39,21 @@ def download(link, typeLink):
         "safebrowsing.enabled": True
     })
     chrome_options.add_argument('--headless=new')
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get(linkBase+link)
+    driver = safe_driver(chrome_options, linkBase+link)
     time.sleep(1)
     while not downloadFinish(temp_dir):
         time.sleep(0.5)
     time.sleep(1)
     driver.quit()
     return True
+
+
+def safe_driver(options, link):
+    while True:
+        try:
+            driver = webdriver.Chrome(options=options)
+            driver.get(link)
+            return driver
+        except:
+            time.sleep(1)
+            continue

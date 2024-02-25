@@ -16,6 +16,7 @@ types = {
     "css"  : By.CSS_SELECTOR
 }
 
+
 class Element :
 
     element=None 
@@ -59,19 +60,23 @@ class Navigator :
     file     = None
     site     = ""
     scrollm  = 1
+    error    = False
 
     def __init__(self, site, file_state=None) -> None:
-        options = Options()
-        options.add_experimental_option('prefs', {'intl.accept_languages': 'pt,pt_BR', "profile.default_content_setting_values.notifications" : 2})
-        self.file = file_state
-        options.add_argument('--headless=new')
-        self.driver = webdriver.Chrome(executable_path='chromedriver', chrome_options=options)
-        self.driver.set_window_size(2560, 1440)
-        self.site = site
-        self.setUrl()
-        self.driver.get(self.site)
-        if self.getState():
+        try:
+            options = Options()
+            options.add_experimental_option('prefs', {'intl.accept_languages': 'pt,pt_BR', "profile.default_content_setting_values.notifications" : 2})
+            self.file = file_state
+            options.add_argument('--headless=new')
+            self.driver = webdriver.Chrome(executable_path='chromedriver', chrome_options=options)
+            self.driver.set_window_size(2560, 1440)
+            self.site = site
+            self.setUrl()
             self.driver.get(self.site)
+            if self.getState():
+                self.driver.get(self.site)
+        except:
+            self.error = True
 
     def exec(self, script:str) -> str | bool:
         try:
@@ -188,3 +193,11 @@ class Navigator :
         else:
             time.sleep(sec)
     
+
+def safe_navigator(site, file_state=None):
+    while True:
+        navigator = Navigator(site, file_state)
+        if navigator.error: 
+            time.sleep(1)
+            continue
+        return navigator
