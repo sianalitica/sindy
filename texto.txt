@@ -1,0 +1,61 @@
+Sem justificar, pegue do texto os dados da data, valor, contexto do valor (milhões, mil, bilhões, etc) e tipo de valor (real ou dolar) dos ítens:
+
+- Receita Líquida
+- EBITDA Ajustado
+- Resultado Financeiro Líquido
+- Resultado Líquido
+- Dívida Líquida
+- Dívida Líquida/EBITDA
+- Investimentos Total 
+
+Se não tiver algum item, adicione o dado 'nulo' para ele.
+Valores absolutos entre parênteses são valores negativos, insira o caractere "-" no valor.
+As datas podem ter a seguinte expressão regular: \d{1}[TtQq]\d{2}.
+transforme outros tipos de datas para o padrão brasileiro (dd/mm/YYYY)
+
+Texto:
+
+EBITDA of R$3.7 billion
+With a new drop, cash cost reaches a lower level than in 3Q22
+São Paulo, October 26, 2023. Suzano S.A. (B3:SUZB5 | NYSE: SUZ), one of the world’s largest integrated pulp
+and paper producers, announces today its consolidated results for the third quarter of 2023 (3Q23).
+HIGHLIGHTS
+• Pulp sales of 2,486 thousand tons (-11% vs. 3Q22).
+• Paper sales1 of 331 thousand tons (stable vs. 3Q22).
+• Adjusted EBITDA2 and Operating cash generation3
+: R$3.7 billion and R$1.9 billion, respectively.
+• Adjusted EBITDA2/ton from pulp of R$1,172/ton (-57% vs. 3Q22).
+• Adjusted EBITDA2/ton from paper of R$2,366/ton (-16% vs. 3Q22).
+• Average net pulp price in export market: US$547/ton (-33% vs. 3Q22).
+• Average net paper price1 of R$7,085/ton (+3% vs. 3Q22).
+• Pulp cash cost ex-downtime of R$861/ton (-2% vs. 3Q22).
+• Leverage of 2.7 times in USD and 2.6 times in BRL.
+• Cerrado Project completes 78% of physical progress and 68% of financial progress.
+Financial Data (R$ million) 3Q23 2Q23 Δ Q-o-Q 3Q22 Δ Y-o-Y
+LTM
+3Q23
+Net Revenue 8,948 9,160 -2% 14,199 -37% 43,754
+Adjusted EBITDA2 3,695 3,919 -6% 8,596 -57% 21,944
+Adjusted EBITDA Margin2 41% 43% -2 p.p. 61% -20 p.p. 50%
+Net Financial Result (3,494) 4,536 - (1,527) - 5,511
+Net Income (729) 5,078 - 5,448 - 17,051
+Operating Cash Generation
+3 1,904 2,203 -14% 7,155 -73% 15,259
+Net Debt/ Adjusted EBITDA
+2
+(x)
+(R$)
+2.6 x 2.0 x 0.6 x 2.2 x 0.4 x 2.6 x
+Net Debt/ Adjusted EBITDA
+2
+(x)
+(US$)
+2.7 x 2.2 x 0.5 x 2.1 x 0.6 x 2.7 x
+
+Operational Data ('000 tons) 3Q23 2Q23 Δ Q-o-Q 3Q22 Δ Y-o-Y LTM 3Q23
+Sales 2,817 2,807 0% 3,128 -10% 11,457
+Pulp 2,486 2,513 -1% 2,797 -11% 10,213
+Paper
+1 331 294 12% 331 0% 1,243
+1Considers the results of the Consumer Goods Unit (tissue). | 2Excluding non-recurring items. | 3Considers Adjusted EBITDA less sustaining capex (cash
+basis).

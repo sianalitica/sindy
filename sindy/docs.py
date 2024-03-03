@@ -155,7 +155,7 @@ def getLinksDocsToAnalise():
         where not documentos_info.id 
             in (
                 select 
-                   documentos_brutos.id 
+                   documentos_brutos.documento_info_id 
                 from
                    documentos_brutos 
             ) and not documentos_info.link_documento is null;

@@ -1,0 +1,108 @@
+
+Receita Líquida:
+
+Valor: 39,756
+Contexto do valor: milhões de reais
+Tipo de valor: Real
+Data: 31/12/2023
+
+Valor: 18,273
+Contexto do valor: milhões de reais
+Tipo de valor: Real
+Data: 31/12/2023
+
+Valor: nulo
+Contexto do valor: nulo
+Tipo de valor: nulo
+Data: nulo
+
+Valor: R$8,948 milhões
+Contexto do valor: milhões
+Tipo de valor: real
+Data: 3Q23
+
+
+EBITDA Ajustado:
+
+Valor: nulo
+Contexto do valor: nulo
+Tipo de valor: nulo
+Data: nulo
+
+Valor: R$3,695 milhões
+Contexto do valor: milhões
+Tipo de valor: real
+Data: 3Q23
+
+Resultado Financeiro Líquido:
+
+Valor: R$-3,494 milhões (ou seja, -R$3,494 milhões)
+Contexto do valor: milhões
+Tipo de valor: real
+Data: 3Q23
+
+Valor: nulo
+Contexto do valor: nulo
+Tipo de valor: nulo
+Data: nulo
+
+
+Resultado Líquido:
+
+Valor: R$-729 milhões (ou seja, -R$729 milhões)
+Contexto do valor: milhões
+Tipo de valor: real
+Data: 3Q23
+
+Valor: 13.419
+Contexto do valor: milhões de reais
+Tipo de valor: Real
+Data: 31/03/2020
+
+Valor: 14,106
+Contexto do valor: milhões de reais
+Tipo de valor: Real
+Data: 31/12/2023
+
+Dívida Líquida:
+
+Valor: 66.043
+Contexto do valor: milhões de reais
+Tipo de valor: Real
+Data: 31/03/2020
+
+Valor: nulo
+Contexto do valor: nulo
+Tipo de valor: nulo
+Data: nulo
+
+
+Dívida Líquida/EBITDA:
+
+Valor: 6,0x
+Contexto do valor: nulo
+Tipo de valor: Real
+Data: 31/03/2020
+
+Valor: 3.0
+Contexto do valor: vezes (x)
+Tipo de valor: Real
+Data: 31/12/2023
+
+Valor: 3.0
+Contexto do valor: vezes (x)
+Tipo de valor: Real
+Data: 4Q23
+
+Valor: 2.6x (em real) / 2.7x (em dólar)
+Contexto do valor: vezes
+Tipo de valor: nulo
+Data: 3Q23
+
+
+Investimentos Total:
+
+Valor: nulo
+Contexto do valor: nulo
+Tipo de valor: nulo
+Data: nulo
