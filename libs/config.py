@@ -16,14 +16,16 @@ class Config:
     _url_cvm_base = ''
     _link_base_2 = ''
     _temp_dir = ''
+    _chatgpt_token = ''
 
     def __init__(self):
         try:
             data = json.load(open('config.json'))
             
-            self._url_cvm_base = data['url_cvm_base']
-            self._link_base_2  = data['link_base_2']
-            self._temp_dir     = data['temp_dir']
+            self._url_cvm_base  = data['url_cvm_base']
+            self._link_base_2   = data['link_base_2']
+            self._temp_dir      = data['temp_dir']
+            self._chatgpt_token = data['chatgpt_token']
 
             self._data_base['host'] = data['data_base']['host']
             self._data_base['user'] = data['data_base']['user']
@@ -47,6 +49,9 @@ class Config:
     
     def getUrlCvmBase(self):
         return self._url_cvm_base
+    
+    def getChatGPTToken(self):
+        return self._chatgpt_token
     
     def getTempDir(self):
         return self._temp_dir

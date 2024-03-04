@@ -1,5 +1,5 @@
 import asyncio
-from sindy import extract,docs,transform
+from sindy import extract,docs,transform,analise
 from datetime import datetime
 from libs.logs import info,warning,success
 
@@ -13,13 +13,14 @@ async def start():
     print("\033[92m iniciada em: "+ str(datetime.now())+"\x1b[0m")
     while True:
         warning("====================================================")
-        #info("Extração iniciada")
-        #extract.start()
-        #info("Leitura e gravação de documento iniciado")
-        #docs.read()
+        info("Extração iniciada")
+        extract.start()
+        info("Leitura e gravação de documento iniciado")
+        docs.read()
         info("Fazendo análise dos dados nos documentos")
-        info("Fazendo transformação de dados")
-        transform.now()
+        analise.start()
+        #info("Fazendo transformação de dados")
+        #transform.now()
         warning('Fazendo uma pausa de 3h a partir de agora...')
         await asyncio.sleep(60 * 60 * 3)
         success('De volta ao trabalho!')
