@@ -32,6 +32,7 @@ class Config:
             self._data_base['pass'] = data['data_base']['pass']
             self._data_base['port'] = data['data_base']['port']
             self._data_base['dbas'] = data['data_base']['dbas']
+            
         except:
             print("o arquivo config.json não foi configurado na raiz do diretório")
 

@@ -1,22 +1,18 @@
 import asyncio
 from sindy import extract,docs,transform,analise
 from datetime import datetime
-from libs.logs import info,warning,success
+from libs.logs import info,warning,success,header
 
 async def start():
 
-    print("""\033[96m
-    ┍╸┑╻┍┑ ┍╸╮╻ ╻
-    ┕╸┑╽╽╽╽╽ ╽┕╻┙
-     ╸┙╹ ┕┙┕╸╯ ╹ \033[93m v0.0.3
-    """)
-    print("\033[92m iniciada em: "+ str(datetime.now())+"\x1b[0m")
+    header()
+
     while True:
         warning("====================================================")
-        info("Extração iniciada")
-        extract.start()
-        info("Leitura e gravação de documento iniciado")
-        docs.read()
+        #info("Extração iniciada")
+        #extract.start()
+        #info("Leitura e gravação de documento iniciado")
+        #docs.read()
         info("Fazendo análise dos dados nos documentos")
         analise.start()
         #info("Fazendo transformação de dados")

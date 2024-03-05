@@ -9,18 +9,15 @@ headers = {
     "Content-Type":"application/json"
 }
 
+text_patter_data = "O documento abaixo contém dados que fazer referência à uma data que pode estar com a seguinte expressão regular: \d{1}[TtQq]\d{2}"
+
 
 text_patterm = """
-    Sem justificar, pegue do texto os dados dos ítens exibindo os subitens da seguinte forma:
-
-    - item:
-        - data 
-        - valor 
-        - contexto do valor
-        - tipo de valor (real ou dolar) 
+    Sem justificar, pegue do texto os valores dos dados dos ítens baixo:
 
     Itens:
 
+    - Data
     - Receita Líquida
     - EBITDA Ajustado
     - Resultado Financeiro Líquido
@@ -29,16 +26,12 @@ text_patterm = """
     - Dívida Líquida/EBITDA
     - Investimentos Total 
 
-    Detalhes:
+    Sobre o Item 'Data':
+    O texto é uma demonstração dos resultados de uma data que pode conter a seguinte expressão regular: \d{1}[TtQq]\d{2}.
 
-    Se não tiver algum item, adicione o dado 'nulo' para ele sem exibir os subitens.
-    O valor pode ser qualquer tipo numerico ou texto
-    As datas podem ter a seguinte expressão regular: \d{1}[TtQq]\d{2}.
-    transforme outros tipos de datas para o padrão brasileiro (dd/mm/YYYY)
-    contexto do valor porde ser milhões, mil, bilhões ou outro tipo se for identificado 
-    tipo de valor pode ser real, dolar ou nulo caso não seja identificado
-    Pode haver mais de um valor para cada item especificado em datas distintas. 
-    É necessário tentar pegar todos os valores e datas em cada ítem
+    Sbre o Item 'Dívida Líquida/EBITDA':
+    Este item pode ser encontrado como 'Dívida Líq./EBITDA','Dívida Líq./EBITDA Ajustado' ou de outras formas
+
 
     Texto:
     
@@ -57,9 +50,6 @@ def getAnaliseBy(texto):
             }
         ]
     }))
-
-    # print(req.status_code )
-    # print(req.text )
 
     if req.status_code != 200:
         return False
