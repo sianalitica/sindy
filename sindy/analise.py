@@ -3,10 +3,9 @@ from libs.chatgpt import getAnaliseBy
 from libs.logs import info,warning,success,danger
 import mysql.connector
 import time
+import math
 
 conn = mysqli.instance()
-
-# -\s((Receita Líquida|EBITDA Ajustado|Resultado Financeiro Líquido|Resultado Líquido|Dívida Líquida|Dívida Líquida\/EBITDA|Investimentos Total)[:\/\s]*)\n(\s+-\s([^\n]+)\n)+
 
 def saveDataRow(documento_id, dado_bruto)-> bool:
     try:
@@ -17,7 +16,7 @@ def saveDataRow(documento_id, dado_bruto)-> bool:
         cursor = conn.cursor()
         cursor.execute(ins, [documento_id, dado_bruto])
         conn.commit()
-        # print("um dado foi salvo")
+        print("1 dado foi salvo")
         return True
     except mysql.connector.Error as err:
         danger("Não foi possível salvar o dado bruto.", "mysql msg: "+err.msg+"\n mysql code: "+str(err.errno))
@@ -33,7 +32,7 @@ def saveMany(dados_brutos=[]):
         cursor = conn.cursor()
         cursor.executemany(ins, dados_brutos)
         conn.commit()
-        # print(str(len(dados_brutos))+" dados foram salvos com sucesso")
+        print(str(len(dados_brutos))+" dados foram salvos com sucesso")
         return True
     except mysql.connector.Error as err:
         danger("Não foi possível salvar os dados brutos.", "mysql msg: "+err.msg+"\n mysql code: "+str(err.errno))
@@ -88,28 +87,33 @@ def start():
         if(total_char > 40000):
             
             wait = total_char / 40000
-            wait = 60 / wait
+            wait = math.ceil(60 / wait) + 20
             init = 0
             data = []
 
             while init < total_char:
-                final = init+40000
+                final = init+35000
                 if final > total_char:
                     final = total_char
-                if final - init < 20000:
-                    init = final - 20000
+                if final - init < 30000:
+                    init = final - 30000
                 subtext = text[init:final]
                 resp = getAnaliseBy(subtext)
                 if resp:
                     data.append((idrw,resp))
-                    init += 40000
+                    init += 35000
+                else: 
+                    danger("O programa precisou ser parado por causa do erro anterior")
+                    return False
+
                 time.sleep(wait)
                 
             if not saveMany(data):
                 danger("O programa precisou ser parado por causa do erro anterior")
                 return False
         else:
-            if not saveDataRow(idrw, text):
+            resp = getAnaliseBy(text)
+            if not saveDataRow(idrw, resp):
                 danger("O programa precisou ser parado por causa do erro anterior")
                 return False
             

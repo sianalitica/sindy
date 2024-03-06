@@ -1,16 +1,7 @@
 from libs.config import Config
 import requests as request
 import json
-
-TOKEN = Config().getChatGPTToken()
-
-headers = {
-    "Authorization":f"Bearer {TOKEN}",
-    "Content-Type":"application/json"
-}
-
-text_patter_data = "O documento abaixo contém dados que fazer referência à uma data que pode estar com a seguinte expressão regular: \d{1}[TtQq]\d{2}"
-
+from libs.logs import danger,warning
 
 text_patterm = """
     Sem justificar, pegue do texto os valores dos dados dos ítens baixo:
@@ -37,11 +28,16 @@ text_patterm = """
     
 """
 
-def getAnaliseBy(texto):
+def requestAnalise(token, texto):
+    
+    headers = {
+        "Authorization":f"Bearer {token}",
+        "Content-Type":"application/json"
+    }
 
     texto = text_patterm + texto
 
-    req = request.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps({
+    return request.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps({
         "model":"gpt-3.5-turbo",
         "messages":[
             {
@@ -51,8 +47,32 @@ def getAnaliseBy(texto):
         ]
     }))
 
-    if req.status_code != 200:
+
+def getAnaliseBy(texto):
+
+    token = Config.instance().getChatGPTToken()
+
+    if not token:
         return False
+
+    req = requestAnalise(token, texto)
+    
+    if req.status_code != 200:
+        
+        warning("Não foi possível usar o token anterior para análise. Tentando com outro token agora.")
+
+        while True:
+
+            Config.instance().setNextToken()
+            token = Config.instance().getChatGPTToken()
+
+            if not token:
+                danger("Não foi possível realizar a análise dos dados no chatgpt", "code: "+str(req.status_code)+" | msg: '"+req.text+"'")
+                return False
+                
+            req = requestAnalise(token, texto)
+            if req.status_code == 200: break
+
     
     resp = json.loads(req.text)
     return resp["choices"][0]["message"]["content"]
