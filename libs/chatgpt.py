@@ -23,7 +23,6 @@ text_patterm = """
     Sbre o Item 'Dívida Líquida/EBITDA':
     Este item pode ser encontrado como 'Dívida Líq./EBITDA','Dívida Líq./EBITDA Ajustado' ou de outras formas
 
-
     Texto:
     
 """
@@ -50,28 +49,29 @@ def requestAnalise(token, texto):
 
 def getAnaliseBy(texto):
 
-    token = Config.instance().getChatGPTToken()
+    while True:
 
-    if not token:
-        return False
+        token = Config.instance().getChatGPTToken()
 
-    req = requestAnalise(token, texto)
-    
-    if req.status_code != 200:
-        
-        warning("Não foi possível usar o token anterior para análise. Tentando com outro token agora.")
+        if not token:
+            danger("Não foi possível realizar a análise dos dados no chatgpt", "code: "+str(req.status_code)+" | msg: '"+req.text+"'")
+            return False
 
-        while True:
+        req = requestAnalise(token, texto)
+
+        if req.status_code == 200: break
+
+        else:
+            
+            js = json.loads(req.text)
+
+            if js['error']['code'] == "context_length_exceeded":
+                warning("O limite de caracteres excedeu! Tentando navamente com um limite menor...")
+                return "context_length_exceeded"
+
+            warning("Não foi possível usar o token anterior para análise. Tentando com outro token agora...")
 
             Config.instance().setNextToken()
-            token = Config.instance().getChatGPTToken()
-
-            if not token:
-                danger("Não foi possível realizar a análise dos dados no chatgpt", "code: "+str(req.status_code)+" | msg: '"+req.text+"'")
-                return False
-                
-            req = requestAnalise(token, texto)
-            if req.status_code == 200: break
 
     
     resp = json.loads(req.text)

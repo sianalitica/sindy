@@ -71,6 +71,8 @@ def getLastTextsToAnalise() -> str:
 
 def start():
 
+    limit = 40000
+
     while True:
 
         row = getLastTextsToAnalise()
@@ -84,24 +86,27 @@ def start():
         
         total_char = len(row[0][1])
         
-        if(total_char > 40000):
+        if(total_char > limit):
             
-            wait = total_char / 40000
+            wait = total_char / limit
             wait = math.ceil(60 / wait) + 20
             init = 0
             data = []
 
             while init < total_char:
-                final = init+35000
+                final = init+limit
                 if final > total_char:
                     final = total_char
-                if final - init < 30000:
-                    init = final - 30000
+                if final - init < limit:
+                    init = final - limit
                 subtext = text[init:final]
                 resp = getAnaliseBy(subtext)
+                if resp == "context_length_exceeded":
+                    limit = limit - 10000
+                    continue
                 if resp:
                     data.append((idrw,resp))
-                    init += 35000
+                    init += limit
                 else: 
                     danger("O programa precisou ser parado por causa do erro anterior")
                     return False
